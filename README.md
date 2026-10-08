@@ -53,7 +53,7 @@ Start with free-tier infrastructure and expand only when usage validates the nee
 - [ ] MVP release validation
 - [ ] Obsidian knowledge integration
 
-**Current stage:** HAFIK Lite v0.2 security and reliability improvements implemented for client-side session isolation. Automated validation and Lovable Preview visual smoke testing are recorded; deployed data isolation and release readiness remain unverified.
+**Current stage:** HAFIK Lite v0.2 client-side session-isolation improvements are implemented. A live Lovable Cloud PostgreSQL metadata audit verified RLS enabled and authenticated owner policies on five application tables. Cross-user behavioral validation and release readiness remain unverified.
 
 ## Development Milestones
 
@@ -75,7 +75,9 @@ The recorded automated validation includes 25 passing tests, including 20 securi
 
 Lovable Preview visual smoke tests covered Dashboard, Memory, Learning, Chat listing, new conversation, and Settings. These checks provide evidence of interface behavior, not database security.
 
-Milestone 03 remains IN PROGRESS. Real cross-account isolation, cross-tab authentication, deployed row-level security enforcement, and some asynchronous mutation and export scenarios still require validation. Behavioral cross-account testing should preferably use an isolated test environment with synthetic users and data, rather than personal accounts or production records.
+A subsequent live database metadata audit verified RLS enabled and authenticated owner policies on five application tables. This confirms inspected configuration, not cross-user enforcement in practice.
+
+Milestone 03 remains **IN PROGRESS**. Cross-user RLS behavioral tests, cross-tab authentication, and some asynchronous mutation and export scenarios remain pending. Behavioral isolation tests should preferably use an isolated environment with synthetic users and data.
 
 **[Read the Milestone 03 Security & Reliability Case Study](docs/03-security-reliability-and-release-validation.md)**
 

@@ -20,7 +20,9 @@ The recorded automated validation includes 25 passing tests, including 20 securi
 
 Lovable Preview visual smoke testing covered the main application surfaces.
 
-These results document implementation progress and bounded validation evidence. Milestone 03 remains IN PROGRESS because real account isolation, deployed database enforcement, and additional authentication and asynchronous workflows still require verification. Behavioral cross-account testing should preferably use an isolated test environment with synthetic users and data, rather than personal accounts or production records.
+A subsequent live Lovable Cloud PostgreSQL metadata audit verified RLS enabled and authenticated owner policies on five application tables. Ownership columns, foreign keys, grants, roles, functions, and triggers were also inspected.
+
+These findings extend the earlier repository-level review with deployed metadata evidence. They do not establish cross-user behavioral enforcement. Milestone 03 remains **IN PROGRESS**, with behavioral isolation tests and additional authentication and asynchronous workflows still pending.
 
 ## 2. Product Risk & Prioritization
 
@@ -98,33 +100,62 @@ These checks provided a limited review of the application's visible behavior acr
 
 **Validation limitation:** Visual smoke testing is not proof of database security, real cross-account isolation, or complete end-to-end reliability. It also does not establish production deployment. Behavioral cross-account testing should preferably use an isolated test environment with synthetic users and data, rather than personal accounts or production records.
 
-## 7. Preliminary Repository-Level RLS Audit
+## 7. RLS Audit Progress — Repository Review & Live Metadata
 
-A preliminary repository-level review identified ownership policies for five tables in the database migration.
+### Initial repository-level review
 
-This is evidence of authorization policies defined in the repository.
+The preliminary repository-level review identified ownership policies for five tables in the database migration.
 
-It does not establish that the migration has been applied to the deployed database or that row-level security is correctly enabled and enforced there.
+At that stage, the review established policy definitions in source control. It did not verify the deployed database configuration or behavioral enforcement.
 
-**Deployed RLS enforcement:** Not yet verified.
+### Subsequent live metadata audit
 
-Verification with real authenticated accounts remains necessary before making claims about deployed database isolation. Behavioral cross-account testing should preferably use an isolated test environment with synthetic users and data, rather than personal accounts or production records. Validation in a test environment does not by itself verify enforcement in the deployed target environment.
+A live Lovable Cloud PostgreSQL metadata audit subsequently verified RLS enabled and authenticated owner policies on five application tables.
+
+The inspection also covered ownership columns, foreign keys, grants, roles, functions, and triggers.
+
+**Evidence boundary:** This verifies the inspected deployed metadata. Cross-user RLS behavioral tests remain pending, so effective isolation across authenticated users has not yet been demonstrated through behavioral testing.
+
+### Source-code findings
+
+The source review found no confirmed privileged credential exposure or active application RLS bypass within the reviewed scope.
+
+This is a bounded source-review finding, not proof that all credential exposure or authorization risks have been eliminated.
+
+### Platform explanation & unresolved uncertainty
+
+The `sandbox_exec` role remains an infrastructure-level uncertainty. Lovable provided an explanation, but no independent technical documentation was available to substantiate it.
+
+The explanation is recorded as a platform claim, rather than an independently verified security finding.
+
+### Local test-environment preparation
+
+PostgreSQL 17.11 is installed and running locally. Its listener is restricted to `127.0.0.1` and `::1` on port `55432`, and localhost-only hardening has been successfully verified.
+
+Existing authentication rules were preserved. Interactive local administrator authentication was also successfully verified.
+
+No test database, synthetic roles, or RLS behavioral fixtures have been created yet. These results establish local environment preparation, not completed isolation testing.
+
+Cross-user behavioral testing should preferably use an isolated test environment with synthetic users and data, rather than personal accounts or production records.
+
+Local test results will apply to the tested configuration. They will not independently establish enforcement in the Lovable Cloud environment.
 
 ## 8. Remaining Validation & Release Limitations
 
-The following areas remain unverified:
+The following areas remain pending or unverified:
 
-- Real cross-account data isolation
+- Cross-user RLS behavioral enforcement
 - Cross-tab authentication behavior
-- Deployed row-level security enforcement
+- Independent technical substantiation of the platform explanation concerning `sandbox_exec`
+- Creation of a local test database, synthetic roles, and RLS behavioral fixtures
 - Some asynchronous mutation and export scenarios
 - Overall release readiness
 
 Behavioral cross-account testing should preferably use an isolated test environment with synthetic users and data, rather than personal accounts or production records.
 
-The passing automated suite and visual smoke tests do not close these validation gaps.
+Mocked automated tests, visual smoke testing, deployed metadata inspection, source review, and local environment preparation provide different forms of evidence. None substitutes for the pending behavioral isolation tests.
 
-This milestone does not claim production deployment, a completed security audit, or full security certification.
+This milestone does not claim production deployment, a completed comprehensive security audit, or full security certification.
 
 Other priorities identified in Milestone 02 remain part of the broader roadmap unless separately documented with implementation and validation evidence.
 
@@ -140,7 +171,7 @@ Cache scoping, request cancellation, session guards, and state reset address dif
 
 ### Match claims to evidence
 
-Mocked automated tests, static checks, builds, visual smoke tests, and migration inspection answer different questions. Each result should be communicated within its actual scope.
+Mocked automated tests, static checks, builds, visual smoke tests, source review, deployed metadata inspection, and local environment preparation answer different questions. Platform explanations require explicit attribution. Behavioral isolation claims require behavioral evidence from the relevant environment.
 
 ### Use controlled releases
 
@@ -154,11 +185,19 @@ Documenting unverified behavior supports better product decisions. It also keeps
 
 **Milestone 03: IN PROGRESS.**
 
-Client-side session-isolation mitigations have been implemented, with recorded automated validation and Lovable Preview visual smoke testing.
+Client-side session-isolation mitigations are implemented, with recorded automated validation and Lovable Preview visual smoke testing.
+
+A subsequent live Lovable Cloud PostgreSQL metadata audit verified RLS enabled and authenticated owner policies on five application tables. Source review found no confirmed privileged credential exposure or active application RLS bypass within the reviewed scope.
+
+Local PostgreSQL 17.11 installation, localhost-only listener hardening, and interactive administrator authentication are verified. Existing authentication rules were preserved; no test database, synthetic roles, or RLS behavioral fixtures have been created yet.
+
+**Cross-user behavioral enforcement:** Not yet verified.
 
 **Release readiness:** Not yet verified.
 
-The next step is to validate real account isolation, cross-tab authentication, deployed database enforcement, and the remaining asynchronous mutation and export scenarios before considering the milestone complete. Behavioral cross-account testing should preferably use an isolated test environment with synthetic users and data, rather than personal accounts or production records.
+The next steps are to create the isolated synthetic test setup, conduct cross-user isolation tests, resolve the remaining platform uncertainty, and validate outstanding authentication, mutation, and export scenarios.
+
+Results from the local test environment must remain distinct from evidence about enforcement in Lovable Cloud.
 
 ---
 
