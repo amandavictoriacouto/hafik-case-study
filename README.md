@@ -40,15 +40,40 @@ PostgreSQL stores application state. Obsidian remains the personal knowledge sou
 
 Start with free-tier infrastructure and expand only when usage validates the need.
 
-## Roadmap
+## Development Roadmap
 
-- [ ] Foundation and repository setup
-- [ ] Authentication and database
-- [ ] Generative chat
-- [ ] Markdown knowledge import/export
-- [ ] Learning tracker
-- [ ] MVP validation and release
+- [x] Foundation and repository setup
+- [x] Initial MVP implementation with Lovable
+- [x] GitHub and Codex development workflow
+- [x] Source-code technical audit
+- [ ] End-to-end authentication and database validation
+- [ ] Generative chat runtime validation
+- [ ] Markdown import/export reliability improvements
+- [ ] Security and AI cost controls
+- [ ] MVP release validation
+- [ ] Obsidian knowledge integration
 
+**Current stage:** HAFIK Lite v0.1 implemented. Technical validation and reliability improvements in progress.
+
+## Development Milestones
+
+| Milestone | Description | Status |
+|---|---|---|
+| 01 | Project foundation and GitHub setup | Completed |
+| 02 | MVP implementation and technical audit | Completed |
+| 03 | Security, reliability and release validation | In progress |
+| 04 | Obsidian knowledge integration | Planned |
+| 05 | AI evaluation and product metrics | Planned |
+
+### Latest Milestone — MVP Implementation & Technical Audit
+
+HAFIK Lite v0.1 includes an initial implementation of authenticated conversations, generative AI, personal knowledge management, learning tracking, and a personal dashboard.
+
+A source-code audit using OpenAI Codex identified opportunities to improve data privacy, AI cost controls, Markdown portability, and application reliability.
+
+The next iteration prioritizes technical validation and reliability before introducing additional integrations.
+
+**[Read the full Milestone 02 Technical Case Study](docs/02-mvp-implementation-and-audit.md)**
 ## My Role
 
 Product Strategy · Product Discovery · UX · AI Product Engineering · Experimentation
