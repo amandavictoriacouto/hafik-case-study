@@ -6,6 +6,8 @@
 **Development approach:** AI-assisted product building  
 **Tools:** Lovable, GitHub, OpenAI Codex
 
+**Historical context:** This document records the Milestone 02 assessment of HAFIK Lite v0.1. Its findings and next priorities describe the project at that stage. Subsequent implementation and validation progress is documented in [Milestone 03 — Security, Reliability & Release Validation](03-security-reliability-and-release-validation.md).
+
 ---
 
 ## 1. Executive Summary

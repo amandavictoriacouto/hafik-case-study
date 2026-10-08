@@ -4,7 +4,7 @@ Product case study documenting the strategy, architecture, development, and eval
 
 **Building a personal AI system for knowledge, learning and better decisions.**
 
-**Status:** In development · MVP 0.1
+**Status:** In development · HAFIK Lite v0.2 — Security & Reliability in progress
 
 ## The Problem
 
@@ -53,7 +53,7 @@ Start with free-tier infrastructure and expand only when usage validates the nee
 - [ ] MVP release validation
 - [ ] Obsidian knowledge integration
 
-**Current stage:** HAFIK Lite v0.1 implemented. Technical validation and reliability improvements in progress.
+**Current stage:** HAFIK Lite v0.2 security and reliability improvements implemented for client-side session isolation. Automated validation and Lovable Preview visual smoke testing are recorded; deployed data isolation and release readiness remain unverified.
 
 ## Development Milestones
 
@@ -61,19 +61,26 @@ Start with free-tier infrastructure and expand only when usage validates the nee
 |---|---|---|
 | 01 | Project foundation and GitHub setup | Completed |
 | 02 | MVP implementation and technical audit | Completed |
-| 03 | Security, reliability and release validation | In progress |
+| 03 | Security, reliability and release validation | IN PROGRESS |
 | 04 | Obsidian knowledge integration | Planned |
 | 05 | AI evaluation and product metrics | Planned |
 
-### Latest Milestone — MVP Implementation & Technical Audit
+### Latest Milestone — Security & Reliability
 
-HAFIK Lite v0.1 includes an initial implementation of authenticated conversations, generative AI, personal knowledge management, learning tracking, and a personal dashboard.
+HAFIK Lite v0.2 addresses a P1 privacy risk involving user-specific client-side query cache isolation across authentication changes.
 
-A source-code audit using OpenAI Codex identified opportunities to improve data privacy, AI cost controls, Markdown portability, and application reliability.
+Implemented mitigations include user-scoped query keys, pending-query cancellation, AbortSignal propagation, session-generation guards, and account-specific state reset.
 
-The next iteration prioritizes technical validation and reliability before introducing additional integrations.
+The recorded automated validation includes 25 passing tests, including 20 security-focused regression and integration cases using mocked users and data. TypeScript checks, a production build, a controlled pre-commit audit, and staged-diff checks also completed successfully.
 
-**[Read the full Milestone 02 Technical Case Study](docs/02-mvp-implementation-and-audit.md)**
+Lovable Preview visual smoke tests covered Dashboard, Memory, Learning, Chat listing, new conversation, and Settings. These checks provide evidence of interface behavior, not database security.
+
+Milestone 03 remains IN PROGRESS. Real cross-account isolation, cross-tab authentication, deployed row-level security enforcement, and some asynchronous mutation and export scenarios still require validation. Behavioral cross-account testing should preferably use an isolated test environment with synthetic users and data, rather than personal accounts or production records.
+
+**[Read the Milestone 03 Security & Reliability Case Study](docs/03-security-reliability-and-release-validation.md)**
+
+**[Read the Milestone 02 MVP Implementation & Technical Audit](docs/02-mvp-implementation-and-audit.md)**
+
 ## My Role
 
 Product Strategy · Product Discovery · UX · AI Product Engineering · Experimentation
