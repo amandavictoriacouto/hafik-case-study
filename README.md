@@ -1,90 +1,62 @@
-# hafik-case-study
-Product case study documenting the strategy, architecture, development, and evaluation of HAFIK, a personal AI operating system for knowledge, learning, and decision support.
 # HAFIK — Personal AI Operating System
 
-**Building a personal AI system for knowledge, learning and better decisions.**
+A personal AI product exploring how conversations, knowledge and learning activity can become useful context.
 
-**Status:** In development · HAFIK Lite v0.2 — Security & Reliability in progress
+**Stage:** HAFIK Lite v0.2 — Security & Reliability\
+**Milestone 03:** IN PROGRESS\
+**Cross-account isolation in Lovable Cloud:** NOT VERIFIED
 
-## The Problem
+## Product problem and scope
 
-Knowledge is fragmented across notes, conversations, learning platforms and digital tools. Finding information is only part of the challenge; transforming it into actionable context is harder.
+Personal knowledge is fragmented across notes, conversations and learning tools. HAFIK's focused MVP brings these activities into one application before expanding into advanced retrieval or automation.
 
-## Product Vision
-
-HAFIK is a personal AI operating system designed to connect knowledge, support continuous learning and assist with contextual decision-making.
-
-## MVP Scope
-
-- Generative AI chat with persistent conversation history
-- Personal knowledge and Markdown note management
-- Learning goals and progress tracking
-- Personal dashboard
-- Private authentication
-
-## Technology Stack
-
-Lovable · TypeScript · Supabase PostgreSQL · Codex · GitHub · Obsidian
-
-## Product Decisions
-
-**Decision 001 — Build a focused MVP**
-
-Prioritize a functional end-to-end product over a broad set of integrations.
-
-**Decision 002 — Separate operational data from knowledge**
-
-PostgreSQL stores application state. Obsidian remains the personal knowledge source.
-
-**Decision 003 — Keep development costs minimal**
-
-Start with free-tier infrastructure and expand only when usage validates the need.
-
-## Development Roadmap
-
-- [x] Foundation and repository setup
-- [x] Initial MVP implementation with Lovable
-- [x] GitHub and Codex development workflow
-- [x] Source-code technical audit
-- [ ] End-to-end authentication and database validation
-- [ ] Generative chat runtime validation
-- [ ] Markdown import/export reliability improvements
-- [ ] Security and AI cost controls
-- [ ] MVP release validation
-- [ ] Obsidian knowledge integration
-
-**Current stage:** HAFIK Lite v0.2 client-side session-isolation improvements are implemented. A live Lovable Cloud PostgreSQL metadata audit verified RLS enabled and authenticated owner policies on five application tables. Cross-user behavioral validation and release readiness remain unverified.
-
-## Development Milestones
-
-| Milestone | Description | Status |
+| Capability | Implementation | Validation boundary |
 |---|---|---|
-| 01 | Project foundation and GitHub setup | Completed |
-| 02 | MVP implementation and technical audit | Completed |
-| 03 | Security, reliability and release validation | IN PROGRESS |
-| 04 | Obsidian knowledge integration | Planned |
-| 05 | AI evaluation and product metrics | Planned |
+| Authentication | Implemented | Anonymous redirect, registration, email confirmation and login passed in Lovable Preview, as reported by the project owner |
+| Persistent conversations, messages and notes | Implemented | Persistence paths reviewed; complete deployed A/B behavioral validation is NOT VERIFIED |
+| Generative AI chat | Authenticated server-side integration implemented | Runtime quality, reliability and enforceable spending limits remain pending |
+| Learning goals and dashboard | Implemented; progress derived from study sessions | Source reviewed; complete deployed behavioral validation pending |
+| Obsidian compatibility | Manual Markdown import/export implemented with limitations | Import/export reliability improvements remain pending; no automatic synchronization |
+| Account-specific cache protection | Implemented | Historical mocked regression and route-integration results recorded |
+| Database isolation | Owner policies defined; deployed metadata inspected | Local synthetic RLS tests passed as reported; deployed A/B isolation is NOT VERIFIED |
+| Semantic retrieval and advanced agents | Planned; outside current MVP | Not implemented or validated |
 
-### Latest Milestone — Security & Reliability
+## My role — AI Product Manager / AI Product Builder
 
-HAFIK Lite v0.2 addresses a P1 privacy risk involving user-specific client-side query cache isolation across authentication changes.
+The work spans product framing, MVP scoping, UX decisions, AI-assisted implementation, risk prioritization and validation design. Lovable supports application development; Codex supports engineering analysis and implementation; GitHub provides change traceability. These tools do not replace evidence-based release decisions.
 
-Implemented mitigations include user-scoped query keys, pending-query cancellation, AbortSignal propagation, session-generation guards, and account-specific state reset.
+A central decision was to prioritize privacy and reliability before expanding integrations: investigate a P1 account-cache risk, implement complementary controls, and distinguish implementation progress from security assurance.
 
-The recorded automated validation includes 25 passing tests, including 20 security-focused regression and integration cases using mocked users and data. TypeScript checks, a production build, a controlled pre-commit audit, and staged-diff checks also completed successfully.
+## Architecture
 
-Lovable Preview visual smoke tests covered Dashboard, Memory, Learning, Chat listing, new conversation, and Settings. These checks provide evidence of interface behavior, not database security.
+React and TypeScript with TanStack Start/Router provide the application interface. The Supabase client accesses Lovable Cloud PostgreSQL under user-scoped RLS. Authenticated server functions handle AI requests through the Lovable AI Gateway. PostgreSQL stores operational data; Obsidian compatibility is limited to manual Markdown import/export.
 
-A subsequent live database metadata audit verified RLS enabled and authenticated owner policies on five application tables. This confirms inspected configuration, not cross-user enforcement in practice.
+## Recorded outcomes
 
-Milestone 03 remains **IN PROGRESS**. Cross-user RLS behavioral tests, cross-tab authentication, and some asynchronous mutation and export scenarios remain pending. Behavioral isolation tests should preferably use an isolated environment with synthetic users and data.
+- Environment handling was hardened and documented; public configuration remains tracked temporarily for compatibility.
+- User-scoped query keys, cancellation, AbortSignal propagation, session-generation guards and account-specific state reset were implemented.
+- Historical validation records report 25 passing automated tests, including 20 security-focused cases, plus TypeScript and production-build checks. These were not rerun for this documentation update.
+- Deployed metadata inspection recorded RLS and authenticated owner policies on all five application tables.
+- Local PostgreSQL synthetic tests passed, including rollback and cleanup, according to the project owner's execution report.
+- Basic authentication and main-route visual checks passed in Lovable Preview, as reported by the project owner.
 
-**[Read the Milestone 03 Security & Reliability Case Study](docs/03-security-reliability-and-release-validation.md)**
+These outcomes do not establish deployed cross-account isolation, full release readiness or security certification. Underlying execution logs and screenshots are not bundled with this case.
 
-**[Read the Milestone 02 MVP Implementation & Technical Audit](docs/02-mvp-implementation-and-audit.md)**
+## Milestones
 
-## My Role
+| Milestone | Status |
+|---|---|
+| 01 — Foundation and repository workflow | Completed |
+| 02 — MVP implementation and source audit | Completed; retained as a historical record |
+| 03 — Security, reliability and release validation | IN PROGRESS |
+| Future — Knowledge portability, AI evaluation and product metrics | Planned |
 
-Product Strategy · Product Discovery · UX · AI Product Engineering · Experimentation
+## Evidence and decisions
 
-*This case study will be updated with real implementation evidence, architectural decisions and evaluation results as the product evolves.*
+- [Milestone 02: historical MVP assessment](docs/02-mvp-implementation-and-audit.md)
+- [Milestone 03: security and reliability](docs/03-security-reliability-and-release-validation.md)
+- [Security validation matrix](docs/security-validation-matrix.md)
+- [Evidence register and publication rules](docs/evidence/README.md)
+- [Decisions, residual risks and release criteria](docs/decisions-and-residual-risks.md)
+
+This public repository documents the case. Application source remains private. No user-growth, business-impact or AI-quality metrics are claimed without measurements.

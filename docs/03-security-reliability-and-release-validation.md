@@ -1,204 +1,99 @@
 # Milestone 03 — Security, Reliability & Release Validation
 
-**Project:** HAFIK — Personal AI Operating System\
-**Release:** HAFIK Lite v0.2 — Security & Reliability\
+**Release:** HAFIK Lite v0.2\
 **Status:** IN PROGRESS\
-**Development approach:** AI-assisted product building with evidence-driven validation\
-**Tools:** Lovable, GitHub, OpenAI Codex
+**Deployed A/B isolation:** NOT VERIFIED\
+**Release readiness:** NOT VERIFIED
 
----
+## Executive assessment
 
-## 1. Executive Summary
+This iteration prioritizes privacy and reliability over new integrations. A source-level P1 risk involved cached data and late asynchronous results carrying across account transitions. It was an identified implementation risk, not a confirmed production exposure.
 
-HAFIK Lite v0.2 advances the security and reliability priorities identified during the initial MVP source-code assessment.
+The resulting implementation combines user-scoped query keys, cancellation, AbortSignal propagation, session-generation guards and account-specific state reset. Recorded mocked tests support these controls. Database metadata and local RLS testing provide additional, distinct evidence.
 
-This iteration focused on a P1 privacy risk: user-specific client-side query cache isolation across authentication changes. The engineering objective was to prevent cached data and asynchronous results associated with one session from carrying into another account's interface.
+The local RLS work can be documented as completed on the basis of the project owner's execution report. The broader milestone remains open because real cross-account enforcement in Lovable Cloud has not been demonstrated.
 
-Implemented mitigations include user-scoped query keys, pending-query cancellation, AbortSignal propagation, session-generation guards, and account-specific state reset.
+## Architecture and security boundaries
 
-The recorded automated validation includes 25 passing tests, including 20 security-focused regression and integration cases. TypeScript checks, a production build, a controlled pre-commit audit, and staged-diff checks also completed successfully.
+Browser reads and writes use the Supabase client with per-user RLS. The five user-data tables are conversations, messages, notes, learning_goals and study_sessions.
 
-Lovable Preview visual smoke testing covered the main application surfaces.
+Messages reference conversations; study sessions reference learning goals. Child-record checks require both correct ownership and an owned parent. Deletion relationships include cascades.
 
-A subsequent live Lovable Cloud PostgreSQL metadata audit verified RLS enabled and authenticated owner policies on five application tables. Ownership columns, foreign keys, grants, roles, functions, and triggers were also inspected.
+The authenticated chat server function validates the user JWT through middleware and uses a client configured with that Bearer token. AI generation occurs server-side through the Lovable AI Gateway. Source review supports this design; direct runtime confirmation of the server-to-database hop remains pending.
 
-These findings extend the earlier repository-level review with deployed metadata evidence. They do not establish cross-user behavioral enforcement. Milestone 03 remains **IN PROGRESS**, with behavioral isolation tests and additional authentication and asynchronous workflows still pending.
+A privileged administrative client exists in source, but the reviewed application paths had no confirmed active consumer. Absence of an identified consumer does not prove absence of all deployed privileged access.
 
-## 2. Product Risk & Prioritization
+## Implementation and recorded engineering checks
 
-The Milestone 02 assessment identified session and query-cache isolation as a reliability and privacy priority.
-
-The P1 risk concerned user-specific client-side state across authentication changes. Cached results or pending requests associated with a previous session could create a risk of stale account data appearing after an account transition.
-
-This was treated as a high-priority product engineering issue because users expect personal conversations, knowledge, and learning activity to remain isolated between accounts.
-
-The finding represents an identified implementation risk. It is not evidence of a confirmed production data exposure.
-
-The product decision was to address this risk before expanding integrations or declaring release readiness.
-
-## 3. Implemented Mitigations
-
-The implementation uses several complementary controls:
-
-| Mitigation | Purpose |
-|---|---|
-| User-scoped query keys | Separate cached query results by authenticated user context. |
-| Pending-query cancellation | Cancel pending queries during authentication transitions. |
-| AbortSignal propagation | Carry cancellation signals through the relevant request paths. |
-| Session-generation guards | Prevent results from an earlier session generation from updating the current session's interface. |
-| Account-specific state reset | Reset account-specific interface state when authentication context changes. |
-
-Together, these controls address cache identity, pending work, late results, and retained interface state.
-
-Client-side isolation controls complement database authorization. They do not establish that deployed database access policies are correctly enforced.
-
-## 4. Automated Test Coverage
-
-The expanded automated suite recorded:
-
-- **25 passing tests in total**
-- **20 security-focused regression and integration cases**
-
-The security-focused cases exercise the implemented session-isolation behavior under controlled test conditions.
-
-**Test limitation:** These tests use mocked users and data. Passing results support the behavior exercised by the suite; they do not prove isolation between real accounts in the deployed application.
-
-Real cross-account access and cross-tab authentication behavior remain unverified. Behavioral cross-account testing should preferably use an isolated test environment with synthetic users and data, rather than personal accounts or production records.
-
-## 5. Engineering Validation & Change Control
-
-The recorded validation evidence includes:
-
-| Check | Recorded outcome | Evidence boundary |
+| Item | Recorded result | Boundary |
 |---|---|---|
-| Automated test suite | 25 passing tests | Controlled tests using mocked users and data |
-| TypeScript checks | Passed | Static type validation |
-| Production build | Successful | Build validation; does not establish production deployment |
-| Controlled pre-commit audit | Completed | Review of the proposed application change before commit |
-| Staged-diff checks | Clean | Change hygiene; does not establish security completeness |
+| Environment configuration hardening | Implemented | Public configuration retained temporarily; private credentials excluded from tracked configuration |
+| Account-cache isolation | Implemented | Complements database authorization |
+| Automated suite | 25 passing tests, including 20 security-focused cases | Historical record; mocked users/data; not rerun for this update |
+| TypeScript and production build | Passed | Historical record; build success does not prove deployment |
+| Pre-commit review and diff checks | Completed | Change hygiene, not security certification |
 
-The private application implementation is associated with commit:
+Private application traceability references:
 
-`97fbcadd88aa0f3398751f48531ceb43fce3eb2f`
+- Environment hardening: `79e1045b8dc9f87b42e7c64eda75b77b898eede1`.
+- Cache isolation: `97fbcadd88aa0f3398751f48531ceb43fce3eb2f`.
 
-This commit provides a traceability reference for the private application change. It is not a commit in this public case-study repository.
+These references identify application changes, not commits in this public repository or proof of the currently deployed build.
 
-The public case study summarizes the recorded outcomes. It does not contain the private application source code or the underlying validation artifacts.
+## Local RLS phases 1–3
 
-## 6. Lovable Preview Visual Smoke Testing
+The phase numbering below refers to disposable local RLS setup and testing.
 
-Visual smoke testing in Lovable Preview covered:
+| Phase | Recorded completion | Provenance |
+|---|---|---|
+| 1 — Synthetic roles | Six roles created; restrictive attributes and two authenticated memberships verified | Project owner reported successful execution and verification |
+| 2 — Disposable database | Local database created with controlled ownership and access | Project owner reported completion |
+| 3 — Synthetic RLS behavior | Assertions passed across five tables, including final rollback and cleanup | Project owner reported successful execution |
 
-- Dashboard
-- Memory
-- Learning
-- Chat listing
-- New conversation
-- Settings
+PostgreSQL 17.11 was used locally with loopback-only access. Test identities were non-owner, non-superuser and NOBYPASSRLS. Membership restrictions prevented synthetic users from switching into the authenticated group role.
 
-These checks provided a limited review of the application's visible behavior across its main surfaces.
+The reviewed harness covered own CRUD, bidirectional foreign-record denial, forged ownership, ownership reassignment, cross-user parents, anonymous access, parent reassociation and cascade checks. It separated expected authorization errors from unrelated failures, checked migration integrity and compared relevant metadata.
 
-**Validation limitation:** Visual smoke testing is not proof of database security, real cross-account isolation, or complete end-to-end reliability. It also does not establish production deployment. Behavioral cross-account testing should preferably use an isolated test environment with synthetic users and data, rather than personal accounts or production records.
+The final successful execution and cleanup are reported results. The transcript is not included in this repository, and the exact executed harness revision is not independently pinned by an attached artifact. No assertion count, execution date or duration is invented.
 
-## 7. RLS Audit Progress — Repository Review & Live Metadata
+**What this establishes:** reported behavior of the tested local migration and compatibility setup.
 
-### Initial repository-level review
+**What it does not establish:** Lovable authentication behavior, deployed migration equivalence, real JWT enforcement, platform-role isolation or cross-user enforcement in Lovable Cloud.
 
-The preliminary repository-level review identified ownership policies for five tables in the database migration.
+## Lovable Preview checks
 
-At that stage, the review established policy definitions in source control. It did not verify the deployed database configuration or behavioral enforcement.
+The project owner reported successful:
 
-### Subsequent live metadata audit
+- Anonymous protected-route redirection to `/auth`.
+- Account registration.
+- Email confirmation.
+- Login.
+- Visual smoke checks of Dashboard, Memory, Learning, Chat listing, new conversation and Settings.
 
-A live Lovable Cloud PostgreSQL metadata audit subsequently verified RLS enabled and authenticated owner policies on five application tables.
+These are manual Preview results. They are not equivalent to public-production validation or cross-account authorization testing. Sanitized screenshots and execution records have not been attached.
 
-The inspection also covered ownership columns, foreign keys, grants, roles, functions, and triggers.
+## Deployed metadata and privileged-path review
 
-**Evidence boundary:** This verifies the inspected deployed metadata. Cross-user RLS behavioral tests remain pending, so effective isolation across authenticated users has not yet been demonstrated through behavioral testing.
+The earlier live metadata audit recorded:
 
-### Source-code findings
+- All five application tables existed with RLS enabled and authenticated owner policies.
+- Ownership columns and identifiers matched the expected schema.
+- Both child foreign keys were validated.
+- Broad table grants included anonymous and privileged roles.
+- Anonymous and authenticated roles lacked BYPASSRLS; privileged platform/database roles had BYPASSRLS.
+- The inspected public function and update triggers did not use SECURITY DEFINER.
+- No public views or materialized views were found.
 
-The source review found no confirmed privileged credential exposure or active application RLS bypass within the reviewed scope.
+Broad grants require effective RLS; they do not alone establish an access vulnerability. Metadata inspection does not prove behavior under actual user JWTs.
 
-This is a bounded source-review finding, not proof that all credential exposure or authorization risks have been eliminated.
+The source review found no confirmed privileged credential exposure or active application RLS bypass within its scope. The platform described sandbox_exec as operationally managed, but its isolation was not independently substantiated. This remains a platform claim, not verified assurance.
 
-### Platform explanation & unresolved uncertainty
+## Open validation and closure decision
 
-The `sandbox_exec` role remains an infrastructure-level uncertainty. Lovable provided an explanation, but no independent technical documentation was available to substantiate it.
+**Lovable Cloud A/B isolation: NOT VERIFIED.** Preparation of a test plan is not execution evidence.
 
-The explanation is recorded as a platform claim, rather than an independently verified security finding.
+Next validation covers authenticated own CRUD, known-ID foreign reads/writes, forged ownership, child relationships, anonymous denial, cache transitions, external logout, runtime JWT behavior and browser-delivered secrets inspection. Use synthetic accounts and disposable fixtures; avoid paid AI calls.
 
-### Local test-environment preparation
+Local validation documentation can close with the evidence limitations above. Milestone 03 and release readiness remain open until the [release criteria](decisions-and-residual-risks.md#release-criteria) are met or explicit scoped exceptions are recorded.
 
-PostgreSQL 17.11 is installed and running locally. Its listener is restricted to `127.0.0.1` and `::1` on port `55432`, and localhost-only hardening has been successfully verified.
-
-Existing authentication rules were preserved. Interactive local administrator authentication was also successfully verified.
-
-No test database, synthetic roles, or RLS behavioral fixtures have been created yet. These results establish local environment preparation, not completed isolation testing.
-
-Cross-user behavioral testing should preferably use an isolated test environment with synthetic users and data, rather than personal accounts or production records.
-
-Local test results will apply to the tested configuration. They will not independently establish enforcement in the Lovable Cloud environment.
-
-## 8. Remaining Validation & Release Limitations
-
-The following areas remain pending or unverified:
-
-- Cross-user RLS behavioral enforcement
-- Cross-tab authentication behavior
-- Independent technical substantiation of the platform explanation concerning `sandbox_exec`
-- Creation of a local test database, synthetic roles, and RLS behavioral fixtures
-- Some asynchronous mutation and export scenarios
-- Overall release readiness
-
-Behavioral cross-account testing should preferably use an isolated test environment with synthetic users and data, rather than personal accounts or production records.
-
-Mocked automated tests, visual smoke testing, deployed metadata inspection, source review, and local environment preparation provide different forms of evidence. None substitutes for the pending behavioral isolation tests.
-
-This milestone does not claim production deployment, a completed comprehensive security audit, or full security certification.
-
-Other priorities identified in Milestone 02 remain part of the broader roadmap unless separately documented with implementation and validation evidence.
-
-## 9. Product & Engineering Learnings
-
-### Identify risks before expanding scope
-
-The earlier source-code assessment helped turn a broad privacy concern into a specific engineering priority. Addressing account isolation took precedence over adding integrations.
-
-### Apply defense in depth
-
-Cache scoping, request cancellation, session guards, and state reset address different parts of the same authentication transition. Complementary controls reduce reliance on a single mechanism.
-
-### Match claims to evidence
-
-Mocked automated tests, static checks, builds, visual smoke tests, source review, deployed metadata inspection, and local environment preparation answer different questions. Platform explanations require explicit attribution. Behavioral isolation claims require behavioral evidence from the relevant environment.
-
-### Use controlled releases
-
-A controlled pre-commit audit, staged-diff checks, and a traceable application commit make implementation progress easier to review. Release readiness still depends on completing the remaining validation.
-
-### Make limitations visible
-
-Documenting unverified behavior supports better product decisions. It also keeps implementation progress distinct from deployed security assurance.
-
-## 10. Current Status
-
-**Milestone 03: IN PROGRESS.**
-
-Client-side session-isolation mitigations are implemented, with recorded automated validation and Lovable Preview visual smoke testing.
-
-A subsequent live Lovable Cloud PostgreSQL metadata audit verified RLS enabled and authenticated owner policies on five application tables. Source review found no confirmed privileged credential exposure or active application RLS bypass within the reviewed scope.
-
-Local PostgreSQL 17.11 installation, localhost-only listener hardening, and interactive administrator authentication are verified. Existing authentication rules were preserved; no test database, synthetic roles, or RLS behavioral fixtures have been created yet.
-
-**Cross-user behavioral enforcement:** Not yet verified.
-
-**Release readiness:** Not yet verified.
-
-The next steps are to create the isolated synthetic test setup, conduct cross-user isolation tests, resolve the remaining platform uncertainty, and validate outstanding authentication, mutation, and export scenarios.
-
-Results from the local test environment must remain distinct from evidence about enforcement in Lovable Cloud.
-
----
-
-*This case study documents an ongoing personal AI product-building project. Implementation progress, validation evidence, and unresolved limitations are intentionally distinguished to preserve transparency.*
+See the [validation matrix](security-validation-matrix.md) and [evidence register](evidence/README.md). This case does not claim a comprehensive security certification.
